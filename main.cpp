@@ -9,19 +9,18 @@
 #include "fec_manager.h"
 #include "misc.h"
 #include "tunnel.h"
-//#include "tun_dev.h"
+// #include "tun_dev.h"
 #include "git_version.h"
 using namespace std;
 
-
 static void print_help()
 {
-	char git_version_buf[100]={0};
-	strncpy(git_version_buf,gitversion,10);
+	char git_version_buf[256] = {0};
+	strncpy(git_version_buf, gitversion, 10);
 
 	printf("UDPspeeder V2\n");
-	printf("git version: %s    ",git_version_buf);
-	printf("build date: %s %s\n",__DATE__,__TIME__);
+	printf("git version: %s    ", git_version_buf);
+	printf("build date: %s %s\n", __DATE__, __TIME__);
 	printf("repository: https://github.com/wangyu-/UDPspeeder\n");
 	printf("\n");
 	printf("usage:\n");
@@ -51,7 +50,7 @@ static void print_help()
 	printf("    --random-drop         <number>        simulate packet loss, unit: 0.01%%. default value: 0.\n");
 	printf("    --disable-obscure     <number>        disable obscure, to save a bit bandwidth and cpu\n");
 	printf("    --disable-checksum    <number>        disable checksum to save a bit bandwdith and cpu\n");
-	//printf("    --disable-xor         <number>        disable xor\n");
+	// printf("    --disable-xor         <number>        disable xor\n");
 
 	printf("developer options:\n");
 	printf("    --fifo                <string>        use a fifo(named pipe) for sending commands to the running program, so that you\n");
@@ -59,11 +58,11 @@ static void print_help()
 	printf("                                          supported commands.\n");
 	printf("    -j ,--jitter          jmin:jmax       similiar to -j above, but create jitter randomly between jmin and jmax\n");
 	printf("    -i,--interval         imin:imax       similiar to -i above, but scatter randomly between imin and imax\n");
-    printf("    -q,--queue-len        <number>        fec queue len, only for mode 0, fec will be performed immediately after queue is full.\n");
+	printf("    -q,--queue-len        <number>        fec queue len, only for mode 0, fec will be performed immediately after queue is full.\n");
 	printf("                                          default value: 200. \n");
-    printf("    --decode-buf          <number>        size of buffer of fec decoder,unit: packet, default: 2000\n");
-//    printf("    --fix-latency         <number>        try to stabilize latency, only for mode 0\n");
-    printf("    --delay-capacity      <number>        max number of delayed packets, 0 means unlimited, default: 0\n");
+	printf("    --decode-buf          <number>        size of buffer of fec decoder,unit: packet, default: 2000\n");
+	//    printf("    --fix-latency         <number>        try to stabilize latency, only for mode 0\n");
+	printf("    --delay-capacity      <number>        max number of delayed packets, 0 means unlimited, default: 0\n");
 	printf("    --disable-fec         <number>        completely disable fec, turn the program into a normal udp tunnel\n");
 	printf("    --sock-buf            <number>        buf size for socket, >=10 and <=10240, unit: kbyte, default: 1024\n");
 	printf("    --out-addr            ip:port         force all output packets of '-r' end to go through this address, port 0 for random port.\n");
@@ -77,9 +76,8 @@ static void print_help()
 	printf("    --disable-color                       disable log color\n");
 	printf("    -h,--help                             print this help message\n");
 
-	//printf("common options,these options must be same on both side\n");
+	// printf("common options,these options must be same on both side\n");
 }
-
 
 void sigpipe_cb(struct ev_loop *l, ev_signal *w, int revents)
 {
@@ -98,64 +96,62 @@ void sigint_cb(struct ev_loop *l, ev_signal *w, int revents)
 	myexit(0);
 }
 
-
-
 int main(int argc, char *argv[])
 {
-	working_mode=tunnel_mode;
+	working_mode = tunnel_mode;
 	init_ws();
-	//unit_test();
+	// unit_test();
 
-	struct ev_loop* loop=ev_default_loop(0);
+	struct ev_loop *loop = ev_default_loop(0);
 #if !defined(__MINGW32__)
-    ev_signal signal_watcher_sigpipe;
-    ev_signal_init(&signal_watcher_sigpipe, sigpipe_cb, SIGPIPE);
-    ev_signal_start(loop, &signal_watcher_sigpipe);
+	ev_signal signal_watcher_sigpipe;
+	ev_signal_init(&signal_watcher_sigpipe, sigpipe_cb, SIGPIPE);
+	ev_signal_start(loop, &signal_watcher_sigpipe);
 #else
-    enable_log_color=0;
+	enable_log_color = 0;
 #endif
 
-    ev_signal signal_watcher_sigterm;
-    ev_signal_init(&signal_watcher_sigterm, sigterm_cb, SIGTERM);
-    ev_signal_start(loop, &signal_watcher_sigterm);
+	ev_signal signal_watcher_sigterm;
+	ev_signal_init(&signal_watcher_sigterm, sigterm_cb, SIGTERM);
+	ev_signal_start(loop, &signal_watcher_sigterm);
 
-    ev_signal signal_watcher_sigint;
-    ev_signal_init(&signal_watcher_sigint, sigint_cb, SIGINT);
-    ev_signal_start(loop, &signal_watcher_sigint);
+	ev_signal signal_watcher_sigint;
+	ev_signal_init(&signal_watcher_sigint, sigint_cb, SIGINT);
+	ev_signal_start(loop, &signal_watcher_sigint);
 
-	assert(sizeof(u64_t)==8);
-	assert(sizeof(i64_t)==8);
-	assert(sizeof(u32_t)==4);
-	assert(sizeof(i32_t)==4);
-	assert(sizeof(u16_t)==2);
-	assert(sizeof(i16_t)==2);
-	dup2(1, 2);		//redirect stderr to stdout
+	assert(sizeof(u64_t) == 8);
+	assert(sizeof(i64_t) == 8);
+	assert(sizeof(u32_t) == 4);
+	assert(sizeof(i32_t) == 4);
+	assert(sizeof(u16_t) == 2);
+	assert(sizeof(i16_t) == 2);
+	dup2(1, 2); // redirect stderr to stdout
 	int i, j, k;
 
 	if (argc == 1)
 	{
 		print_help();
-		myexit( -1);
+		myexit(-1);
 	}
 	for (i = 0; i < argc; i++)
 	{
-		if(strcmp(argv[i],"-h")==0||strcmp(argv[i],"--help")==0)
+		if (strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "--help") == 0)
 		{
 			print_help();
 			myexit(0);
 		}
 	}
 
-	process_arg(argc,argv);
+	process_arg(argc, argv);
 
 	delay_manager.set_capacity(delay_capacity);
 
-	if(strlen(tun_dev)==0)
+	if (strlen(tun_dev) == 0)
 	{
-		sprintf(tun_dev,"tun%u",get_fake_random_number()%1000);
+		sprintf(tun_dev, "tun%u", get_fake_random_number() % 1000);
 	}
 
-	if(program_mode==client_mode)
+	if (program_mode == client_mode)
 	{
 		tunnel_client_event_loop();
 	}
@@ -166,4 +162,3 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
-

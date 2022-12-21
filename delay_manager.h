@@ -12,7 +12,7 @@
 #include "packet.h"
 #include "log.h"
 
-//enum delay_type_t {none=0,enum_sendto_u64,enum_send_fd,client_to_local,client_to_remote,server_to_local,server_to_remote};
+// enum delay_type_t {none=0,enum_sendto_u64,enum_send_fd,client_to_local,client_to_remote,server_to_local,server_to_remote};
 
 /*
 struct fd_ip_port_t
@@ -103,12 +103,11 @@ struct my_timer_t
 	}
 };*/
 
-
 struct delay_data_t
 {
 	dest_t dest;
-	//int left_time;//
-	char * data;
+	// int left_time;//
+	char *data;
 	int len;
 	int handle();
 };
@@ -116,28 +115,32 @@ struct delay_data_t
 struct delay_manager_t
 {
 	ev_timer timer;
-	struct ev_loop *loop=0;
-	void (*cb) (struct ev_loop *loop, struct ev_timer *watcher, int revents)=0;
+	struct ev_loop *loop = 0;
+	void (*cb)(struct ev_loop *loop, struct ev_timer *watcher, int revents) = 0;
 
-	//int timer_fd;
+	// int timer_fd;
 	int capacity;
-	multimap<my_time_t,delay_data_t> delay_mp;  //unit us,1 us=0.001ms
+	multimap<my_time_t, delay_data_t> delay_mp; // unit us,1 us=0.001ms
 	delay_manager_t();
 	delay_manager_t(delay_manager_t &b)
 	{
-		assert(0==1);
+		assert(0 == 1);
 	}
-	void set_loop_and_cb(struct ev_loop *loop,void (*cb) (struct ev_loop *loop, struct ev_timer *watcher, int revents))
+	void set_loop_and_cb(struct ev_loop *loop, void (*cb)(struct ev_loop *loop, struct ev_timer *watcher, int revents))
 	{
-		this->loop=loop;
-		this->cb=cb;
-		ev_init(&timer,cb);
+		this->loop = loop;
+		this->cb = cb;
+		ev_init(&timer, cb);
 	}
-	int set_capacity(int a){capacity=a;return 0;}
+	int set_capacity(int a)
+	{
+		capacity = a;
+		return 0;
+	}
 	~delay_manager_t();
-	ev_timer& get_timer();
+	ev_timer &get_timer();
 	int check();
-	int add(my_time_t delay,const dest_t &dest,char *data,int len);
+	int add(my_time_t delay, const dest_t &dest, char *data, int len);
 };
 
 #endif /* DELAY_MANAGER_H_ */
