@@ -32,7 +32,7 @@ static void print_help()
 
 	printf("main options:\n");
 	printf("    -f,--fec              x:y             forward error correction, send y redundant packets for every x packets\n");
-	printf("    --timeout             <number>        how long could a packet be held in queue before doing fec, unit: ms, default: 8ms\n");
+	printf("    --timeout             <number>        how long could a packet be held in queue before doing fec, unit: ms, default: 3ms\n");
 	printf("    --report              <number>        turn on send/recv report, and set a period for reporting, unit: s\n");
 
 	printf("advanced options:\n");
@@ -60,11 +60,11 @@ static void print_help()
 	printf("    -i,--interval         imin:imax       similiar to -i above, but scatter randomly between imin and imax\n");
 	printf("    -q,--queue-len        <number>        fec queue len, only for mode 0, fec will be performed immediately after queue is full.\n");
 	printf("                                          default value: 200. \n");
-	printf("    --decode-buf          <number>        size of buffer of fec decoder,unit: packet, default: 2000\n");
+	printf("    --decode-buf          <number>        size of buffer of fec decoder,unit: packet, default: 933\n");
 	//    printf("    --fix-latency         <number>        try to stabilize latency, only for mode 0\n");
 	printf("    --delay-capacity      <number>        max number of delayed packets, 0 means unlimited, default: 0\n");
 	printf("    --disable-fec         <number>        completely disable fec, turn the program into a normal udp tunnel\n");
-	printf("    --sock-buf            <number>        buf size for socket, >=10 and <=10240, unit: kbyte, default: 1024\n");
+	printf("    --sock-buf            <number>        buf size for socket, >=10 and <=10240, unit: kbyte, default: 10240\n");
 	printf("    --out-addr            ip:port         force all output packets of '-r' end to go through this address, port 0 for random port.\n");
 #ifdef __linux__
 	printf("    --out-interface       <string>        force all output packets of '-r' end to go through this interface.\n");

@@ -11,18 +11,10 @@
 #include "lib/rs.h"
 #include "fd_manager.h"
 
-// int g_fec_data_num=20;
-// int g_fec_redundant_num=10;
-// int g_fec_mtu=1250;
-// int g_fec_queue_len=200;
-// int g_fec_timeout=8*1000; //8ms
-// int g_fec_mode=0;
-
 fec_parameter_t g_fec_par;
 
 int debug_fec_enc = 0;
 int debug_fec_dec = 0;
-// int dynamic_update_fec=1;
 
 const int encode_fast_send = 1;
 const int decode_fast_send = 1;
@@ -30,7 +22,7 @@ const int decode_fast_send = 1;
 int short_packet_optimize = 1;
 int header_overhead = 40;
 
-u32_t fec_buff_num = 2000; // how many packet can fec_decode_manager hold. shouldnt be very large,or it will cost huge memory
+u32_t fec_buff_num = 933; // how many packet can fec_decode_manager hold, shouldnt be very large, or it will cost huge memory, 0.4*2333 raw per sec
 
 blob_encode_t::blob_encode_t()
 {
@@ -150,48 +142,14 @@ int blob_decode_t::output(int &n, char **&s_arr, int *&len_arr)
 fec_encode_manager_t::~fec_encode_manager_t()
 {
 	clear_all();
-	// fd_manager.fd64_close(timer_fd64);
 }
-/*
-u64_t fec_encode_manager_t::get_timer_fd64()
-{
-	return timer_fd64;
-}*/
 
 fec_encode_manager_t::fec_encode_manager_t()
 {
-	// int timer_fd;
-
-	/*
-	if ((timer_fd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK)) < 0)
-	{
-		mylog(log_fatal,"timer_fd create error");
-		myexit(1);
-	}
-	timer_fd64=fd_manager.create(timer_fd);*/
-
-	/////reset_fec_parameter(g_fec_data_num,g_fec_redundant_num,g_fec_mtu,g_fec_queue_len,g_fec_timeout,g_fec_mode);
-
 	fec_par.clone(g_fec_par);
 	clear_data();
 }
-/*
-int fec_encode_manager_t::reset_fec_parameter(int data_num,int redundant_num,int mtu,int queue_len,int timeout,int mode)
-{
-	fec_data_num=data_num;
-	fec_redundant_num=redundant_num;
-	fec_mtu=mtu;
-	fec_queue_len=queue_len;
-	fec_timeout=timeout;
-	fec_mode=mode;
 
-	assert(data_num+redundant_num<max_fec_packet_num);
-
-	//clear();
-
-	clear_data();
-	return 0;
-}*/
 int fec_encode_manager_t::append(char *s, int len /*,int &is_first_packet*/)
 {
 	if (counter == 0)

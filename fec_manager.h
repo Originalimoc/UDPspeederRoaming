@@ -28,7 +28,7 @@ struct fec_parameter_t
 	int version = 0;
 	int mtu = default_mtu;
 	int queue_len = 200;
-	int timeout = 8 * 1000;
+	int timeout = default_fec_timeout_in_ms * 1000;
 	int mode = 0;
 
 	int rs_cnt = 0;
@@ -128,14 +128,8 @@ struct fec_parameter_t
 			for (int j = pre_x + 1; j <= now_x - 1; j++)
 			{
 				int in_x = j;
-
-				////////	int in_y= double(pre_y) + double(in_x-pre_x)*k+ 0.9999;// round to upper
-
 				double distance = now_x - pre_x;
-				///////	double in_ratio=pre_ratio*(1.0-(in_x-pre_x)/distance)   +   now_ratio *(1.0- (now_x-in_x)/distance);
-				//////	int in_y= in_x*in_ratio + 0.9999;
 				int in_y = pre_y + (now_y - pre_y) * (in_x - pre_x) / distance + 0.9999;
-
 				if (in_x + in_y > max_fec_packet_num)
 				{
 					in_y = max_fec_packet_num - in_x;
@@ -147,7 +141,6 @@ struct fec_parameter_t
 			}
 		}
 		rs_cnt = par_vec[par_vec.size() - 1].x;
-
 		return 0;
 	}
 
@@ -299,27 +292,16 @@ class fec_encode_manager_t : not_copy_able_t
 
 private:
 	u32_t seq;
-
-	// int fec_mode;
-	// int fec_data_num,fec_redundant_num;
-	// int fec_mtu;
-	// int fec_queue_len;
-	// int fec_timeout;
 	fec_parameter_t fec_par;
-
 	my_time_t first_packet_time;
 	my_time_t first_packet_time_for_output;
-
 	blob_encode_t blob_encode;
 	char input_buf[max_fec_packet_num + 5][buf_len];
 	int input_len[max_fec_packet_num + 100];
-
 	char *output_buf[max_fec_packet_num + 100];
 	int output_len[max_fec_packet_num + 100];
 
 	int counter;
-	// int timer_fd;
-	// u64_t timer_fd64;
 
 	int ready_for_output;
 	u32_t output_n;
@@ -366,11 +348,6 @@ public:
 	}
 	int clear_all()
 	{
-
-		// itimerspec zero_its;
-		// memset(&zero_its, 0, sizeof(zero_its));
-		// timerfd_settime(timer_fd, TFD_TIMER_ABSTIME, &zero_its, 0);
-
 		if (loop)
 		{
 			ev_timer_stop(loop, &timer);
@@ -447,11 +424,6 @@ public:
 		assert(fec_data != 0);
 		clear();
 	}
-	/*
-	fec_decode_manager_t(const fec_decode_manager_t &b)
-	{
-		assert(0==1);//not allowed to copy
-	}*/
 	~fec_decode_manager_t()
 	{
 		mylog(log_debug, "fec_decode_manager destroyed\n");
@@ -475,7 +447,6 @@ public:
 		return 0;
 	}
 
-	// int re_init();
 	int input(char *s, int len);
 	int output(int &n, char **&s_arr, int *&len_arr);
 };

@@ -520,8 +520,6 @@ int unit_test()
 		int *len;
 		fec_decode_manager.output(n, s_arr, len);
 
-		// fec_encode_manager.reset_fec_parameter(3,2,g_fec_mtu,g_fec_queue_len,g_fec_timeout,1);
-
 		fec_parameter_t &fec_par = fec_encode_manager.get_fec_par();
 		fec_par.mtu = g_fec_par.mtu;
 		fec_par.queue_len = g_fec_par.queue_len;
@@ -544,7 +542,6 @@ int unit_test()
 		fec_encode_manager.input((char *)b.c_str(), b.length());
 		fec_encode_manager.output(n, s_arr, len);
 		assert(n == 1);
-		// fec_decode_manager.input(s_arr[0],len[0]);
 
 		fec_encode_manager.input((char *)c.c_str(), c.length());
 		fec_encode_manager.output(n, s_arr, len);
@@ -676,8 +673,6 @@ void process_arg(int argc, char *argv[])
 	int no_l = 1, no_r = 1;
 	while ((opt = getopt_long(argc, argv, "l:r:hcsk:j:f:p:n:i:q:", long_options, &option_index)) != -1)
 	{
-		// string opt_key;
-		// opt_key+=opt;
 		switch (opt)
 		{
 		case 'k':
@@ -719,7 +714,7 @@ void process_arg(int argc, char *argv[])
 			{
 				int output_interval = -1;
 				sscanf(optarg, "%d\n", &output_interval);
-				if (output_interval < 0 || output_interval > 1000 * 10)
+				if (output_interval < 0 || output_interval > 10 * 1000)
 				{
 					mylog(log_fatal, "output_interval must be between 0 and 10,000(10 second)\n");
 					myexit(-1);

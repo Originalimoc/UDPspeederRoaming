@@ -16,39 +16,21 @@ int delay_data_t::handle()
 delay_manager_t::delay_manager_t()
 {
 	capacity = 0;
-
-	// if ((timer_fd = timerfd_create(CLOCK_MONOTONIC, TFD_NONBLOCK)) < 0)
-	//{
-	//	mylog(log_fatal,"timer_fd create error");
-	//	myexit(1);
-	// }
-
-	// itimerspec zero_its;
-	// memset(&zero_its, 0, sizeof(zero_its));
-
-	// timerfd_settime(timer_fd, TFD_TIMER_ABSTIME, &zero_its, 0);
 }
 delay_manager_t::~delay_manager_t()
 {
 	// TODO ,we currently dont need to deconstruct it
 }
 
-/*
-int delay_manager_t::get_timer_fd()
-{
-	return timer_fd;
-}*/
-
 int delay_manager_t::add(my_time_t delay, const dest_t &dest, char *data, int len)
 {
 	delay_data_t delay_data;
 	delay_data.dest = dest;
-	// delay_data.data=data;
 	delay_data.len = len;
 
 	if (capacity != 0 && int(delay_mp.size()) >= capacity)
 	{
-		mylog(log_warn, "max pending packet reached,ignored\n");
+		mylog(log_warn, "max pending packet reached, ignored\n");
 		return -1;
 	}
 	if (delay == 0)

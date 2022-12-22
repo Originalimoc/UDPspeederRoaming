@@ -106,10 +106,8 @@ const int max_data_len = 3600;
 const int buf_len = max_data_len + 200;
 
 const int default_mtu = 1300;
+const int default_fec_timeout_in_ms = 3;
 
-// const u32_t timer_interval=400;
-////const u32_t conv_timeout=180000;
-// const u32_t conv_timeout=40000;//for test
 const u32_t conv_timeout = 180000;
 const int max_conv_num = 10000;
 const int max_conn_num = 200;
@@ -191,11 +189,11 @@ typedef u64_t fd64_t;
 enum dest_type
 {
 	none = 0,
-	type_fd64_addr,	/* not used as of 20221221 */
+	type_fd64_addr, /* not used as of 20221221 */
 	type_fd64,
-	type_fd,		/* not used as of 20221221 */
-	type_write_fd,	/* not used as of 20221221 */
-	type_fd_addr /*,type_fd*/
+	type_fd,	   /* not used as of 20221221 */
+	type_write_fd, /* not used as of 20221221 */
+	type_fd_addr   /*,type_fd*/
 };
 
 struct pseudo_header
