@@ -40,7 +40,7 @@ static void print_help()
 	printf("                                          mode 1 usually introduces less latency, but you have to care about mtu.\n");
 	printf("    --mtu                 <number>        mtu. for mode 0, the program will split packet to segment smaller than mtu value.\n");
 	printf("                                          for mode 1, no packet will be split, the program just check if the mtu is exceed.\n");
-	printf("                                          default value: 1250. you typically shouldnt change this value.\n");
+	printf("                                          default value: 1300. you typically shouldnt change this value.\n");
 	printf("    -j,--jitter           <number>        simulated jitter. randomly delay first packet for 0~<number> ms, default value: 0.\n");
 	printf("                                          do not use if you dont know what it means.\n");
 	printf("    -i,--interval         <number>        scatter each fec group to a interval of <number> ms, to defend burst packet loss.\n");
@@ -59,15 +59,15 @@ static void print_help()
 	printf("    -j ,--jitter          jmin:jmax       similiar to -j above, but create jitter randomly between jmin and jmax\n");
 	printf("    -i,--interval         imin:imax       similiar to -i above, but scatter randomly between imin and imax\n");
 	printf("    -q,--queue-len        <number>        fec queue len, only for mode 0, fec will be performed immediately after queue is full.\n");
-	printf("                                          default value: 200. \n");
+	printf("                                          default value: 24. \n");
 	printf("    --decode-buf          <number>        size of buffer of fec decoder,unit: packet, default: 933\n");
 	//    printf("    --fix-latency         <number>        try to stabilize latency, only for mode 0\n");
-	printf("    --delay-capacity      <number>        max number of delayed packets, 0 means unlimited, default: 0\n");
+	printf("    --delay-capacity      <number>        max number of delayed packets, 0 means unlimited, default: 144\n");
 	printf("    --disable-fec         <number>        completely disable fec, turn the program into a normal udp tunnel\n");
 	printf("    --sock-buf            <number>        buf size for socket, >=10 and <=10240, unit: kbyte, default: 10240\n");
-	printf("    --out-addr            ip:port         force all output packets of '-r' end to go through this address, port 0 for random port.\n");
+	printf("    --out-addr            ip:port         force all output packets of '-r' end to go through this address, port 0 for random port, disabled on client mode\n");
 #ifdef __linux__
-	printf("    --out-interface       <string>        force all output packets of '-r' end to go through this interface.\n");
+	printf("    --out-interface       <string>        force all output packets of '-r' end to go through this interface, disabled on client mode\n");
 #endif
 	printf("log and help options:\n");
 	printf("    --log-level           <number>        0: never    1: fatal   2: error   3: warn \n");

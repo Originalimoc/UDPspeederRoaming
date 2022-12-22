@@ -38,7 +38,8 @@ fd_manager_t fd_manager;
 
 int time_mono_test = 0;
 
-int delay_capacity = 0;
+const int delay_capacity_default = 144; //3x mode 0 fec and 2x for buffer
+int delay_capacity = delay_capacity_default;
 
 char sub_net[256] = "10.22.22.0";
 u32_t sub_net_uint32 = 0;

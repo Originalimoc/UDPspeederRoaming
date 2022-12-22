@@ -12,6 +12,7 @@
 #include "log.h"
 #include "lib/rs.h"
 
+const int queue_len_default = 24; // 5ms * 50Mbps / 1300bytes
 const int max_blob_packet_num = 30000;	   // how many packet can be contain in a blob_t ,can be set very large
 const u32_t anti_replay_buff_size = 30000; // can be set very large
 
@@ -27,7 +28,7 @@ struct fec_parameter_t
 {
 	int version = 0;
 	int mtu = default_mtu;
-	int queue_len = 200;
+	int queue_len = queue_len_default;
 	int timeout = default_fec_timeout_in_ms * 1000;
 	int mode = 0;
 

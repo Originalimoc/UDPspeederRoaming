@@ -41,7 +41,7 @@ int delay_manager_t::add(my_time_t delay, const dest_t &dest, char *data, int le
 		int ret = delay_data.handle();
 		if (ret != 0)
 		{
-			mylog(log_trace, "handle() return %d\n", ret);
+			mylog(log_trace, "delay_data.handle()#1 return %d\n", ret);
 		}
 		return 0;
 	}
@@ -83,7 +83,7 @@ int delay_manager_t::check()
 				ret = it->second.handle();
 				if (ret != 0)
 				{
-					mylog(log_trace, "handle() return %d\n", ret);
+					mylog(log_trace, "delay_data.handle()#2 return %d\n", ret);
 				}
 				free(it->second.data);
 				delay_mp.erase(it);
